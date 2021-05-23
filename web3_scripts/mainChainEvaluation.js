@@ -9,7 +9,6 @@ const privateKey = "c9e0723ee95a1aa3d12d161be4d210d6ddf4e23e09c65ac1387ec1398a26
 const address = "0x2f56b78D2d3B5EF6FDf0A6c2415089909496C646"
 
 var parentChainWeb3 = new Web3(new Web3.providers.WebsocketProvider("wss://sokol.poa.network/wss"));
-var childChainWeb3 = new Web3(new Web3.providers.HttpProvider("https://kovan.infura.io/v3/ced2c5d2f8d3400b816ba80f23133260"));
 
 var USDTContract = new parentChainWeb3.eth.Contract(
     contractAbi.USDTAbi,

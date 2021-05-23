@@ -1,24 +1,24 @@
 const Web3 = require('web3');
 const contractAbi = require("./contractAbi");
 
-const Bridgeable_Token_Addr = "0x5362490a5c48cBc2a686DEE73695CE52f7eBbD3c";
-const Parent_Bridgeable_Token_Addr = "0x10fd971Dab524A87537E0Ea8af7EC7Eb7d117f95"
-const Bridge_ERC677_Extension_Mediator_Addr = "0xaE3E850013D4045709610893156175354340Bb19";
+const Bridgeable_Token_Addr = "0x10fd971Dab524A87537E0Ea8af7EC7Eb7d117f95";
+const Child_Bridgeable_Token_Addr = "0x5362490a5c48cBc2a686DEE73695CE52f7eBbD3c"
+const Bridge_ERC677_Extension_Mediator_Addr = "0x194F052528d5FbBEd085004C6451Ef116dD61173";
 
 const privateKey = "0xa8722239642858ff15eaea6be734903a9d45323026de080f73a48eb540fb738f";
 const address = "0x4d8d003045a78701312733AEfD13eB22d43ce378"
 
 var parentChainWeb3 = new Web3(new Web3.providers.HttpProvider("https://sokol.poa.network"));
-var childChainWeb3 = new Web3(new Web3.providers.HttpProvider("https://kovan.infura.io/v3/e7f0b1ef3e524603bf17ce7172436601"));
+var childChainWeb3 = new Web3(new Web3.providers.HttpProvider("https://ec2-18-222-183-209.us-east-2.compute.amazonaws.com"));
 
-var childBridgeableToken = new childChainWeb3.eth.Contract(
+var parentBridgeableToken = new parentChainWeb3.eth.Contract(
 	contractAbi.bridgeTokenAbi,
 	Bridgeable_Token_Addr
 );
 
-var parentBridgeableToken = new parentChainWeb3.eth.Contract(
+var childBridgeableToken = new childChainWeb3.eth.Contract(
 	contractAbi.bridgeTokenAbi,
-	Parent_Bridgeable_Token_Addr, 
+	Child_Bridgeable_Token_Addr, 
 	{from: address}
 );
 
@@ -40,14 +40,14 @@ async function crosschain_test(count) {
 		gas: 1000000,
 		gasPrice: 10000000000,
 		value: 0,
-		data: childBridgeableToken.methods.transferAndCall(Bridge_ERC677_Extension_Mediator_Addr, 1, '0x').encodeABI()
+		data: parentBridgeableToken.methods.transferAndCall(Bridge_ERC677_Extension_Mediator_Addr, 1, '0x').encodeABI()
 	}
 
-	const { balanceOf } = parentBridgeableToken.methods;
+	const { balanceOf } = childBridgeableToken.methods;
 	let startValue = await balanceOf(address).call();
 	// console.log(`startValue: ${startValue}`);
 
-    var nonce = await childChainWeb3.eth.getTransactionCount(address);
+    var nonce = await parentChainWeb3.eth.getTransactionCount(address);
 
     let done = 0;
     let totalSentTime = 0;
@@ -64,7 +64,7 @@ async function crosschain_test(count) {
         let sentEnd, executedEnd, confirmedEnd;
         let hasError = false;
 
-    	signTransaction(childChainWeb3, tx, privateKey, () => {
+    	signTransaction(parentChainWeb3, tx, privateKey, () => {
             sentEnd = new Date().getTime();
             // console.log(`sentEnd: ${sentEnd}`);
             // console.log(`sent: ${sentEnd - start}`);

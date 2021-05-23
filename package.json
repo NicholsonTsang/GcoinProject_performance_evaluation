@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "node-metamask": "^1.1.2",
+    "web3": "^1.3.5"
+  }
+}

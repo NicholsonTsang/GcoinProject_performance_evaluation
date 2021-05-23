@@ -8,7 +8,7 @@ const receiver = "0xd4B82B58942a87f6CAF9B1c4d52c63672ECea24F";
 const privateKey = "c9e0723ee95a1aa3d12d161be4d210d6ddf4e23e09c65ac1387ec1398a267f71"; //sender
 const address = "0x2f56b78D2d3B5EF6FDf0A6c2415089909496C646"
 
-var childChainWeb3 = new Web3(new Web3.providers.WebsocketProvider("wss://sokol.poa.network/wss"));
+var childChainWeb3 = new Web3(new Web3.providers.WebsocketProvider("wss://ec2-18-222-183-209.us-east-2.compute.amazonaws.com"));
 
 var GcoinContract = new childChainWeb3.eth.Contract(
     contractAbi.GcoinAbi,
